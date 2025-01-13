@@ -18,10 +18,13 @@ void setup() {
   Serial.begin(115200);
   connectToWiFi();
   sendGetRequest(2, 7); // send 7 to field 1
+  pinMode(D4, OUTPUT);
+    
 }
 
 void loop() {
   sendGetRequest(2, analogRead(A0));
+  delay(16000);
 }
 
 void connectToWiFi() {
@@ -46,6 +49,9 @@ void sendGetRequest(int field, int data) {
   int httpCode = http.GET();
 
   if (httpCode > 0) {
+    digitalWrite(D4, LOW);
+    delay(100);
+    digitalWrite(D4, HIGH);
     Serial.println("Data sent succesfully");
   } 
   else {
