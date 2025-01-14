@@ -16,20 +16,20 @@ HTTPClient http;
 
 void connectToWiFi();
 void sendGetRequest(int field, int data);
-void receiveGetRequest(int field, int number);
+void receiveGetRequest(int field);
 
 void setup() {
   Serial.begin(115200);
   pinMode(D4, OUTPUT);
   connectToWiFi();
-  sendGetRequest(2, 1227); // send 7 to field 1
+  sendGetRequest(2, 17); // send 7 to field 1
   
 }
 
 void loop() {
-  //sendGetRequest(2, analogRead(A0));
-  receiveGetRequest(2, 1);
-  delay(16000);
+  sendGetRequest(2, analogRead(A0));
+  receiveGetRequest(2);
+  delay(12000);
 }
 
 void connectToWiFi() {
@@ -48,6 +48,10 @@ void connectToWiFi() {
   Serial.print("MAC Address: ");
   Serial.println(WiFi.macAddress());
 }
+
+/*
+  This method sends data to the specified field at the cloud
+*/
 void sendGetRequest(int field, int data) {
   //https://api.thingspeak.com/update?api_key=BBCNFT8TL919MV0I&field1=0
   String url = String(base_url) + "update?api_key=" + api_keyWrite + "&field" + field + "=" + data;
@@ -66,9 +70,13 @@ void sendGetRequest(int field, int data) {
   http.end();
 }
 
-void receiveGetRequest(int field, int number){
-  //https://api.thingspeak.com/channels/2808305/feeds.json?api_key=8ERR6GQF0PP4S2PQ&results=2
-  String url = String(base_url) + "channels/"+ channelID+"/feeds.json?api_key=" + api_keyRead + "&results"+ "=" + number;
+/*
+  This method takes a field number and prints the last value at the this specific field
+*/
+void receiveGetRequest(int field){
+  //https://api.thingspeak.com/channels/2808305/feeds.json?api_key=8ERR6GQF0PP4S2PQ&results=2     Sample link
+
+  String url = String(base_url) + "channels/"+ channelID+"/feeds.json?api_key=" + api_keyRead + "&results"+ "=1";
   http.begin(client, url);
   int httpCode = http.GET();
 
